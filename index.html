@@ -243,7 +243,7 @@
 			sortLocalStorage();
 			for (var i = 0; i < localStorage.length; i++) {
 				var localStorageElement = sortLocalStorageArray[i];
-				if (localStorageElement['key'].indexOf(month.innerHTML) == 0) {
+				if (localStorageElement['key'].indexOf(month.innerHTML) == 0 && localStorageElement['key'].indexOf(year.innerHTML) == localStorageElement['key'].indexOf('_') + 1) {
 					if (localStorageElement['key'].indexOf('income') == localStorageElement['key'].indexOf('_') + 6) {
 						elementValue = localStorageElement['value'];
 						htmlTagP = document.createElement('p');
