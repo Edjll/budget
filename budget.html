@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		* {
+			margin: 0;
+			outline: none;
+			text-decoration: none;
+		}
+
+		button {
+			cursor: pointer;
+		}
+
+		body {
+			max-width: 500px;
+			position: relative;
+			margin: 0 auto;
+			width: 100%;
+			height: 100vh;
+			background-color: #ccc;
+		}
+
+		.display {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: #999;
+			height: 20%;
+		}
+
+		.allBalance {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 80px;
+			height: 50px;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+		
+		#balanceAllTime {
+			font-size: 24px;
+		}
+
+		#textDisplay {
+			font-size: 36px;
+		}
+	
+		.date {
+			background-color: #666;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			height: 10%;
+		}
+
+		.monthYear {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+		}
+
+		#month {
+			font-size: 24px;
+		}
+
+		#year {
+			font-size: 18px;
+		}
+
+		#nextMonth {
+			background-image: url(стрелка-png-1.png);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			border: none;
+			border-radius: 5px;
+			margin-right: 5px;
+		}
+
+		#backMonth {
+			background-image: url(стрелка-png-1.png);
+			transform: rotateZ(180deg);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			border: none;
+			border-radius: 5px;
+			margin-left: 5px;
+		}
+
+		.changeMonth {
+			width: 50px;
+			height: 50px;
+		}
+
+		#dateChange {
+			width: 100%;
+			box-sizing: border-box;
+			height: 40px;
+			justify-content: center;
+			font-size: 24px;
+		}
+
+		.division {
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-gap: 10px;
+			height: 70%;
+		}
+
+		.textDivision {
+			font-size: 24px;
+			margin: 10px 0;
+		}
+
+		.division input {
+		    width: 90%;
+   			border-radius: 5px;
+			height: 35px;
+			padding: 5px 10px 5px 10px;
+			box-sizing: border-box;
+			font-size: 18px;
+		}
+
+		.element {
+			font-size: 18px;
+			margin: 10px 0;
+		}
+
+		.income {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background-color: #999;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+
+		.costs {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			background-color: #999;
+			overflow-y: auto;
+			overflow-x: hidden;
+		}
+	</style>
+</head>
+<body>
+	<div class="display">
+		<div class="allBalance">
+			<p class="textAllBalance">All time</p>
+			<p id="balanceAllTime">0</p>
+		</div>
+		<p id="textDisplay">0</p>
+	</div>
+	<div class="date">
+		<button id="backMonth" class="changeMonth"></button>
+		<div class="monthYear">
+			<p id="month"></p>
+			<p id="year"></p>
+		</div>
+		<button id="nextMonth" class="changeMonth"></button>
+	</div>
+	<div class="division">
+		<div class="income">
+			<span class="textDivision">Доходы</span>
+			<input id="income" type="text" name="income">
+		</div>
+		<div class="costs">
+			<span class="textDivision">Расходы</span>
+			<input id="costs" type="text" name="costs">
+		</div>
+	</div>
+	<script>
+
+		var 
+			elementValue  = '',
+			htmlTagP,
+			counter;
+			sortLocalStorageArray = [],
+			dateNow = new Date();
+			monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+		month.innerHTML = monthArray[dateNow.getMonth()];
+		year.innerHTML  = dateNow.getFullYear();
+
+
+		if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income') == null) {
+			localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_income', '1');
+		}
+		if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs') == null) {
+			localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs', '1');
+		}
+		if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance') == null) {
+			localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_balance', '0');
+		}
+		if (localStorage.getItem('balance') == null) {
+			localStorage.setItem('balance', '0');
+		}
+
+		var 
+			counterIncome = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income')),
+			counterCosts  = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs')),
+			balance 	  = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance')),
+			balanceAll	  = Number(localStorage.getItem('balance'));
+
+
+		function sortLocalStorage(){
+		    if(localStorage.length > 0){
+		      	var localStorageArray = [];
+		      	for (i = 0; i < localStorage.length; i++){
+		          	localStorageArray[i] = {
+		          		key:    localStorage.key(i),
+		          		value: localStorage.getItem(localStorage.key(i)),
+		          	}
+		    	}
+		    }
+
+		    function sortArrayObject(a, b) {
+		    	if (a['key'] > b['key']) {
+		    		return 1;
+		    	}
+		    	if (a['key'] < b['key']) {
+		    		return -1;
+		    	}
+		    }
+
+		    sortLocalStorageArray = localStorageArray.sort(sortArrayObject);
+		}
+
+		function loadLocalStorage() {
+			if (localStorage.length == 0) {
+				return;
+			}
+			sortLocalStorage();
+			for (var i = 0; i < localStorage.length; i++) {
+				var localStorageElement = sortLocalStorageArray[i];
+				if (localStorageElement['key'].indexOf(month.innerHTML) == 0 && localStorageElement['key'].indexOf(year.innerHTML, localStorageElement['key'].indexOf('_') + 1) == 0) {
+					if (localStorageElement['key'].indexOf('income') == localStorageElement['key'].indexOf('_') + 6) {
+						elementValue = localStorageElement['value'];
+						htmlTagP = document.createElement('p');
+						htmlTagP.setAttribute('class', 'element');
+						htmlTagP.innerHTML = elementValue;
+						document.getElementsByClassName('income')[0].appendChild(htmlTagP);
+					} 
+					if (localStorageElement['key'].indexOf('costs') == localStorageElement['key'].indexOf('_') + 6) {
+						elementValue = localStorageElement['value'];
+						htmlTagP = document.createElement('p');
+						htmlTagP.setAttribute('class', 'element');
+						htmlTagP.innerHTML = elementValue;
+						document.getElementsByClassName('costs')[0].appendChild(htmlTagP);
+					}
+				}
+			}
+			balanceAllTime.innerHTML = balanceAll;
+			textDisplay.innerHTML = balance;
+		}
+
+		loadLocalStorage();
+
+		function removeSymbol() {
+			if (this.value.slice(-1) >= '0' && this.value.slice(-1) <= '9') {
+				return;
+			}
+			this.value = this.value.slice(0, -1);
+		}
+
+		income.oninput = removeSymbol;
+		costs.oninput = removeSymbol;
+
+		function addItem(element) {
+			if (element.keyCode != 13) {
+				return;
+			}
+			if (this.value.length > 0) {
+				htmlTagP = document.createElement('p');
+				htmlTagP.setAttribute('class', 'element');
+				if (this.id == 'income') {
+					balance += Number(this.value);
+					balanceAll += Number(this.value);
+					counter = counterIncome;
+				} else {
+					balance -= Number(this.value);
+					balanceAll -= Number(this.value);
+					counter = counterCosts;
+				}
+				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_balance', String(balance));
+				localStorage.setItem('balance', String(balanceAll));
+				htmlTagP.innerHTML = this.value;
+				document.getElementsByClassName(this.id)[0].appendChild(htmlTagP);
+				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_' + this.id + '_' + counter, this.value);
+				if (this.id == 'income') {
+					counterIncome++
+					localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_income', String(counterIncome));
+				} else {
+					counterCosts++;
+					localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs', String(counterCosts));
+				}
+			}
+			this.value = '';
+			balanceAllTime.innerHTML = balanceAll;
+			textDisplay.innerHTML = balance;
+		}
+
+		income.onkeydown = addItem;
+
+		costs.onkeydown = addItem;
+
+		function click(where) {
+			var pArray = document.getElementsByClassName('element');
+			if (pArray.length != 0) {
+				i = pArray.length;
+				while (i) {
+					pArray[i - 1].parentNode.removeChild(pArray[i - 1]);
+					i--;
+				}
+			}
+			if (monthArray.indexOf(month.innerHTML) + where < 12 && monthArray.indexOf(month.innerHTML) + where >= 0) {
+				month.innerHTML = monthArray[monthArray.indexOf(month.innerHTML) + where];
+			} else if (month.innerHTML == 'December') {
+				month.innerHTML = monthArray[0];
+				year.innerHTML = Number(year.innerHTML) + where;
+			} else if (month.innerHTML == 'January') {
+				month.innerHTML = monthArray[11];
+				year.innerHTML = Number(year.innerHTML) + where;
+			}
+			if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income') == null) {
+				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_income', '1');
+			}
+			if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs') == null) {
+				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs', '1');
+			}
+			counterIncome = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income'));
+			counterCosts  = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs'));
+			if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance') == null) {
+				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_balance', '0');
+			}
+			balance = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance'));
+			loadLocalStorage();
+		}
+
+		nextMonth.onclick = function() {
+			click(1);
+		}
+		backMonth.onclick = function() {
+			click(-1);
+		}
+	</script>
+</body>
+</html>
