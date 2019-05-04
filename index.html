@@ -20,8 +20,22 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			background-color: #eee;
 			height: 100vh;
+		}
+
+		#costsElements::-webkit-scrollbar, #incomeElements::-webkit-scrollbar {
+		    width: 7px;
+		}
+		 
+		#costsElements::-webkit-scrollbar-track, #incomeElements::-webkit-scrollbar-track{
+		    border-top-right-radius: 10px;
+		    border-top-left-radius: 10px;
+		}
+		 
+		#costsElements::-webkit-scrollbar-thumb, #incomeElements::-webkit-scrollbar-thumb {
+			border-radius: 10px;
+		 	background-color: rgba(0, 0, 0, 0.7);
+		  	outline: 1px solid slategrey;
 		}
 
 		input {
@@ -47,7 +61,6 @@
 			margin: 0 auto;
 			width: 100%;
 			height: 90vh;
-		    background-color: #83d5f1f5;
 			border-radius: 10px;
 			overflow: hidden;
 		}
@@ -63,11 +76,13 @@
 			justify-content: center;
 			align-items: center;
 			height: 20%;
+		    background-color: #dd5621a3;
+	        color: #ffc889;
 		}
 
 		.allBalance {
 			position: absolute;
-			top: 0;
+			top: 10px;
 			left: 0;
 			width: 130px;
 			height: 50px;
@@ -90,7 +105,7 @@
 			justify-content: space-between;
 			align-items: center;
 			height: 60px;
-			background-color: #00beff99;
+			background: linear-gradient(to bottom, #dd5621a3, #3c2b17b5);
 		}
 
 		.monthYear {
@@ -103,20 +118,26 @@
 
 		#month {
 			font-size: 24px;
-		    width: 119px;
-		    background-color: #bdeeff;
+		    width: 142px;
 		    height: 60%;
+	        background-color: #66320b78;
+		    color: #f5824f;
+		    border-top-left-radius: 50px;
+		    border-top-right-radius: 5px;
 		}
 
 		#year {
 			font-size: 18px;
-			width: 119px;
-			background-color: #bdeeff;
+			width: 142px;
 			height: 40%;
+			background-color: #66320b78;
+		    color: #f7ceb7c9;
+		    border-bottom-left-radius: 5px;
+		    border-bottom-right-radius: 50px;
 		}
 
 		#nextMonth {
-			background-image: url(стрелка-png-1.png);
+			background-image: url(arrow_right.png);
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;
@@ -132,18 +153,18 @@
 
 
 		#backMonth {
-			background-image: url(стрелка-png-1.png);
+			background-image: url(arrow_left.png);
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;
 			border: none;
 			background-color: transparent;
-			transform: translateX(10px) rotateZ(180deg);
+			transform: translateX(10px);
 			transition-duration: 0.5s;
 		}
 
 		#backMonth:hover {
-			transform: translateX(0) rotateZ(180deg);
+			transform: translateX(0);
 		}
 
 		.changeMonth {
@@ -163,6 +184,8 @@
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);
 			height: 70%;
+		    background-color: #3c2b17b5;
+   			color: #ff8f5c;
 		}
 
 		.textDivision {
@@ -177,8 +200,19 @@
 			padding: 5px 10px 5px 10px;
 			box-sizing: border-box;
 			font-size: 18px;
+		    background-color: #e7815399;
+		    color: #ffd7c4;
+		    box-shadow: inset 3px 3px 7px 1px #3c2b17b5, inset -3px -3px 7px 1px #3c2b17b5;
 		}
 
+		.division input:focus {
+			box-shadow: inset 3px 3px 12px 1px #3c2b17b5, inset -3px -3px 12px 1px #3c2b17b5;
+		}
+
+		.division input:disabled {
+			background-color: #af613e99;
+		}
+		
 		#incomeElements {
 			width: 100%;
 			margin-top: 10px;
@@ -327,15 +361,15 @@
 			sortLocalStorage();
 			for (var i = 0; i < localStorage.length; i++) {
 				var localStorageElement = sortLocalStorageArray[i];
-				if (localStorageElement['key'].indexOf(monthServer) == 0 && (localStorageElement['key'].indexOf('_', monthServer.length + 2) - (monthServer.length + 1) == year.value.length)) {
-					if (localStorageElement['key'].indexOf('income') == localStorageElement['key'].indexOf('_') + 6) {
+				if (localStorageElement['key'].indexOf(monthServer) == 0 && (localStorageElement['key'].indexOf('_', monthServer.length + 2) - (monthServer.length + 1) == year.value.length) && localStorageElement['key'].indexOf(year.value) == monthServer.length + 1) {
+					if (localStorageElement['key'].indexOf('income') == monthServer.length + 2 + year.value.length) {
 						elementValue = localStorageElement['value'];
 						htmlTagLi = document.createElement('li');
 						htmlTagLi.setAttribute('class', 'element');
 						htmlTagLi.innerHTML = elementValue;
 						incomeElements.appendChild(htmlTagLi);
 					} 
-					if (localStorageElement['key'].indexOf('costs') == localStorageElement['key'].indexOf('_') + 6) {
+					if (localStorageElement['key'].indexOf('costs') == monthServer.length + 2 + year.value.length) {
 						elementValue = localStorageElement['value'];
 						htmlTagLi = document.createElement('li');
 						htmlTagLi.setAttribute('class', 'element');
@@ -400,7 +434,13 @@
 		costs.onkeydown = addItem;
 
 		month.oninput = function() {
-			if (monthArrayUser.indexOf(month.value) != -1) {
+			if (this.value.length > 8 || this.value.slice(-1) < 'А' || this.value.slice(-1) > 'я') {
+				this.value = this.value.slice(0, -1);
+			}
+			if (this.value.slice(0, 1) > 'Я') {
+				this.value = this.value.slice(0, 1).toUpperCase() + this.value.slice(1, this.value.length);
+			}
+			if (monthArrayUser.indexOf(this.value) != -1) {
 				newDate();
 				income.removeAttribute('disabled');
 				costs.removeAttribute('disabled');
