@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>Document</title>
 	<style>
 		* {
@@ -15,19 +17,51 @@
 		}
 
 		body {
-			max-width: 500px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: #eee;
+			height: 100vh;
+		}
+
+		input {
+			text-align: center;
+			border: none;
+			box-sizing: border-box;
+		}
+
+		#background {
+			position: fixed;
+			width: 100vw;
+			height: 100vh;
+			background-image: url(background.jpg);
+			background-size: cover;
+			background-position: top center;
+			background-repeat: no-repeat;
+			transform: scale(1.2);
+		}
+
+		.wrapper {
+			max-width: 90vw;
 			position: relative;
 			margin: 0 auto;
 			width: 100%;
+			height: 90vh;
+		    background-color: #83d5f1f5;
+			border-radius: 10px;
+			overflow: hidden;
+		}
+
+		.maxSize {
+			max-width: 100%;
 			height: 100vh;
-			background-color: #ccc;
+			border-radius: unset;
 		}
 
 		.display {
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			background-color: #999;
 			height: 20%;
 		}
 
@@ -35,7 +69,7 @@
 			position: absolute;
 			top: 0;
 			left: 0;
-			width: 80px;
+			width: 130px;
 			height: 50px;
 			display: flex;
 			flex-direction: column;
@@ -52,11 +86,11 @@
 		}
 	
 		.date {
-			background-color: #666;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			height: 10%;
+			height: 60px;
+			background-color: #00beff99;
 		}
 
 		.monthYear {
@@ -64,14 +98,21 @@
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
+			height: 100%;
 		}
 
 		#month {
 			font-size: 24px;
+		    width: 119px;
+		    background-color: #bdeeff;
+		    height: 60%;
 		}
 
 		#year {
 			font-size: 18px;
+			width: 119px;
+			background-color: #bdeeff;
+			height: 40%;
 		}
 
 		#nextMonth {
@@ -80,19 +121,29 @@
 			background-position: center;
 			background-repeat: no-repeat;
 			border: none;
-			border-radius: 5px;
-			margin-right: 5px;
+			background-color: transparent;
+			transform: translateX(-10px);
+			transition-duration: 0.5s;
 		}
+
+		#nextMonth:hover {
+			transform: translateX(0);
+		}
+
 
 		#backMonth {
 			background-image: url(стрелка-png-1.png);
-			transform: rotateZ(180deg);
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;
 			border: none;
-			border-radius: 5px;
-			margin-left: 5px;
+			background-color: transparent;
+			transform: translateX(10px) rotateZ(180deg);
+			transition-duration: 0.5s;
+		}
+
+		#backMonth:hover {
+			transform: translateX(0) rotateZ(180deg);
 		}
 
 		.changeMonth {
@@ -111,7 +162,6 @@
 		.division {
 			display: grid;
 			grid-template-columns: repeat(2, 1fr);
-			grid-gap: 10px;
 			height: 70%;
 		}
 
@@ -129,6 +179,26 @@
 			font-size: 18px;
 		}
 
+		#incomeElements {
+			width: 100%;
+			margin-top: 10px;
+			text-align: center;
+			box-sizing: border-box;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		    height: calc(63vh - 92px);
+		}
+
+		#costsElements {
+			width: 100%;
+			margin-top: 10px;
+			text-align: center;
+			box-sizing: border-box;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		    height: calc(63vh - 92px);
+		}
+
 		.element {
 			font-size: 18px;
 			margin: 10px 0;
@@ -138,80 +208,94 @@
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			background-color: #999;
-			overflow-y: auto;
-			overflow-x: hidden;
 		}
 
 		.costs {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
-			background-color: #999;
-			overflow-y: auto;
-			overflow-x: hidden;
 		}
 	</style>
 </head>
 <body>
-	<div class="display">
-		<div class="allBalance">
-			<p class="textAllBalance">All time</p>
-			<p id="balanceAllTime">0</p>
+	<div id="background"></div>
+	<div class="wrapper">
+		<div class="display">
+			<div class="allBalance">
+				<p class="textAllBalance">Всего</p>
+				<p id="balanceAllTime">0</p>
+			</div>
+			<p id="textDisplay">0</p>
 		</div>
-		<p id="textDisplay">0</p>
-	</div>
-	<div class="date">
-		<button id="backMonth" class="changeMonth"></button>
-		<div class="monthYear">
-			<p id="month"></p>
-			<p id="year"></p>
+		<div class="date">
+			<button id="backMonth" class="changeMonth"></button>
+			<div class="monthYear">
+				<input type="text" placeholder="Месяц" id="month">
+				<input type="text" placeholder="Год" id="year">
+			</div>
+			<button id="nextMonth" class="changeMonth"></button>
 		</div>
-		<button id="nextMonth" class="changeMonth"></button>
-	</div>
-	<div class="division">
-		<div class="income">
-			<span class="textDivision">Доходы</span>
-			<input id="income" type="text" name="income">
-		</div>
-		<div class="costs">
-			<span class="textDivision">Расходы</span>
-			<input id="costs" type="text" name="costs">
+		<div class="division">
+			<div class="income">
+				<span class="textDivision">Доходы</span>
+				<input id="income" type="text" name="income">
+				<ol id="incomeElements"></ol>
+			</div>
+			<div class="costs">
+				<span class="textDivision">Расходы</span>
+				<input id="costs" type="text" name="costs">
+				<ol id="costsElements"></ol>
+			</div>
 		</div>
 	</div>
 	<script>
 
+			if( 	navigator.userAgent.match(/Android/i)
+				 || navigator.userAgent.match(/webOS/i)
+				 || navigator.userAgent.match(/iPhone/i)
+				 || navigator.userAgent.match(/iPad/i)
+				 || navigator.userAgent.match(/iPod/i)
+				 || navigator.userAgent.match(/BlackBerry/i)
+				 || navigator.userAgent.match(/Windows Phone/i)
+			) {
+			    document.getElementsByClassName('wrapper')[0].className += ' maxSize';
+			} else {
+				window.onmousemove = function() {
+						var mouseY = event.clientY;
+						var mouseX = event.clientX;
+						background.style.transform = 'scale(1.2) translate(' + mouseX / 24 + 'px, ' + mouseY / 24 + 'px)';
+				}
+			}
+			
+
 		var 
 			elementValue  = '',
-			htmlTagP,
-			counter;
+			htmlTagLi,
+			counter,
 			sortLocalStorageArray = [],
-			dateNow = new Date();
-			monthArray = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+			dateNow = new Date(),
+			monthArrayUser = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+			monthArrayServer = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+			monthServer;
 
-		month.innerHTML = monthArray[dateNow.getMonth()];
-		year.innerHTML  = dateNow.getFullYear();
+		month.value = monthArrayUser[dateNow.getMonth()];
+		year.value  = dateNow.getFullYear();
 
+		monthServer = monthArrayServer[monthArrayUser.indexOf(month.value)];
 
-		if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income') == null) {
-			localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_income', '1');
-		}
-		if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs') == null) {
-			localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs', '1');
-		}
-		if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance') == null) {
-			localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_balance', '0');
-		}
 		if (localStorage.getItem('balance') == null) {
 			localStorage.setItem('balance', '0');
 		}
 
 		var 
-			counterIncome = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income')),
-			counterCosts  = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs')),
-			balance 	  = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance')),
+			counterIncome = 0,
+			counterCosts  = 0,
+			balance 	  = 0,
 			balanceAll	  = Number(localStorage.getItem('balance'));
 
+		if (localStorage.getItem(monthServer + '_' + year.value + '_balance') != null) {
+			balance = Number(localStorage.getItem(monthServer + '_' + year.value + '_balance'));
+		}
 
 		function sortLocalStorage(){
 		    if(localStorage.length > 0){
@@ -243,20 +327,20 @@
 			sortLocalStorage();
 			for (var i = 0; i < localStorage.length; i++) {
 				var localStorageElement = sortLocalStorageArray[i];
-				if (localStorageElement['key'].indexOf(month.innerHTML) == 0 && localStorageElement['key'].indexOf(year.innerHTML) == localStorageElement['key'].indexOf('_') + 1) {
+				if (localStorageElement['key'].indexOf(monthServer) == 0 && (localStorageElement['key'].indexOf('_', monthServer.length + 2) - (monthServer.length + 1) == year.value.length)) {
 					if (localStorageElement['key'].indexOf('income') == localStorageElement['key'].indexOf('_') + 6) {
 						elementValue = localStorageElement['value'];
-						htmlTagP = document.createElement('p');
-						htmlTagP.setAttribute('class', 'element');
-						htmlTagP.innerHTML = elementValue;
-						document.getElementsByClassName('income')[0].appendChild(htmlTagP);
+						htmlTagLi = document.createElement('li');
+						htmlTagLi.setAttribute('class', 'element');
+						htmlTagLi.innerHTML = elementValue;
+						incomeElements.appendChild(htmlTagLi);
 					} 
 					if (localStorageElement['key'].indexOf('costs') == localStorageElement['key'].indexOf('_') + 6) {
 						elementValue = localStorageElement['value'];
-						htmlTagP = document.createElement('p');
-						htmlTagP.setAttribute('class', 'element');
-						htmlTagP.innerHTML = elementValue;
-						document.getElementsByClassName('costs')[0].appendChild(htmlTagP);
+						htmlTagLi = document.createElement('li');
+						htmlTagLi.setAttribute('class', 'element');
+						htmlTagLi.innerHTML = elementValue;
+						costsElements.appendChild(htmlTagLi);
 					}
 				}
 			}
@@ -281,8 +365,9 @@
 				return;
 			}
 			if (this.value.length > 0) {
-				htmlTagP = document.createElement('p');
-				htmlTagP.setAttribute('class', 'element');
+				newLocal();
+				htmlTagLi = document.createElement('li');
+				htmlTagLi.setAttribute('class', 'element');
 				if (this.id == 'income') {
 					balance += Number(this.value);
 					balanceAll += Number(this.value);
@@ -292,17 +377,17 @@
 					balanceAll -= Number(this.value);
 					counter = counterCosts;
 				}
-				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_balance', String(balance));
+				localStorage.setItem(monthServer + '_' + year.value + '_balance', String(balance));
 				localStorage.setItem('balance', String(balanceAll));
-				htmlTagP.innerHTML = this.value;
-				document.getElementsByClassName(this.id)[0].appendChild(htmlTagP);
-				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_' + this.id + '_' + counter, this.value);
+				htmlTagLi.innerHTML = this.value;
+				document.getElementById(this.id + 'Elements').appendChild(htmlTagLi);
+				localStorage.setItem(monthServer + '_' + year.value + '_' + this.id + '_' + counter, this.value);
 				if (this.id == 'income') {
 					counterIncome++
-					localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_income', String(counterIncome));
+					localStorage.setItem(monthServer + '_' + year.value + '_counter_income', String(counterIncome));
 				} else {
 					counterCosts++;
-					localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs', String(counterCosts));
+					localStorage.setItem(monthServer + '_' + year.value + '_counter_costs', String(counterCosts));
 				}
 			}
 			this.value = '';
@@ -314,7 +399,26 @@
 
 		costs.onkeydown = addItem;
 
-		function click(where) {
+		month.oninput = function() {
+			if (monthArrayUser.indexOf(month.value) != -1) {
+				newDate();
+				income.removeAttribute('disabled');
+				costs.removeAttribute('disabled');
+			} else {
+				deleteElements();
+				textDisplay.innerHTML = 0;
+				income.setAttribute('disabled', '');
+				costs.setAttribute('disabled', '');
+			}
+		}
+
+		year.oninput = function() {
+			if (year.value.length > 0) {
+				newDate();
+			}
+		}
+
+		function deleteElements() {
 			var pArray = document.getElementsByClassName('element');
 			if (pArray.length != 0) {
 				i = pArray.length;
@@ -323,28 +427,48 @@
 					i--;
 				}
 			}
-			if (monthArray.indexOf(month.innerHTML) + where < 12 && monthArray.indexOf(month.innerHTML) + where >= 0) {
-				month.innerHTML = monthArray[monthArray.indexOf(month.innerHTML) + where];
-			} else if (month.innerHTML == 'December') {
-				month.innerHTML = monthArray[0];
-				year.innerHTML = Number(year.innerHTML) + where;
-			} else if (month.innerHTML == 'January') {
-				month.innerHTML = monthArray[11];
-				year.innerHTML = Number(year.innerHTML) + where;
+		}
+
+		function newLocal() {
+			if (localStorage.getItem(monthServer + '_' + year.value + '_counter_income') == null) {
+				localStorage.setItem(monthServer + '_' + year.value + '_counter_income', '1');
 			}
-			if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income') == null) {
-				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_income', '1');
+			if (localStorage.getItem(monthServer + '_' + year.value + '_counter_costs') == null) {
+				localStorage.setItem(monthServer + '_' + year.value + '_counter_costs', '1');
 			}
-			if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs') == null) {
-				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs', '1');
+			if (localStorage.getItem(monthServer + '_' + year.value + '_balance') == null) {
+				localStorage.setItem(monthServer + '_' + year.value + '_balance', '0');
 			}
-			counterIncome = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_income'));
-			counterCosts  = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_counter_costs'));
-			if (localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance') == null) {
-				localStorage.setItem(month.innerHTML + '_' + year.innerHTML + '_balance', '0');
+			counterIncome = Number(localStorage.getItem(monthServer + '_' + year.value + '_counter_income'));
+			counterCosts  = Number(localStorage.getItem(monthServer + '_' + year.value + '_counter_costs'));
+			balance 	  = Number(localStorage.getItem(monthServer + '_' + year.value + '_balance'));
+		}
+
+		function newDate() {
+			deleteElements();
+			monthServer = monthArrayServer[monthArrayUser.indexOf(month.value)];
+			if (localStorage.getItem(monthServer + '_' + year.value + '_balance') == null) {
+				balance = 0;
+			} else {
+				balance = Number(localStorage.getItem(monthServer + '_' + year.value + '_balance'));
 			}
-			balance = Number(localStorage.getItem(month.innerHTML + '_' + year.innerHTML + '_balance'));
 			loadLocalStorage();
+		}
+
+
+
+
+		function click(where) {
+			if (monthArrayUser.indexOf(month.value) + where < 12 && monthArrayUser.indexOf(month.value) + where >= 0) {
+				month.value = monthArrayUser[monthArrayUser.indexOf(month.value) + where];
+			} else if (month.value == 'Декабрь') {
+				month.value = monthArrayUser[0];
+				year.value = Number(year.value) + where;
+			} else if (month.value == 'Январь') {
+				month.value = monthArrayUser[11];
+				year.value = Number(year.value) + where;
+			}
+			newDate();
 		}
 
 		nextMonth.onclick = function() {
